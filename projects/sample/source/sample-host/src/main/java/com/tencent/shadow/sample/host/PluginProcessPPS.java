@@ -22,11 +22,18 @@ import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.util.Log;
 
+import com.tencent.shadow.core.common.Logger;
+import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.dynamic.host.PluginProcessService;
 import com.tencent.shadow.sample.host.lib.LoadPluginCallback;
 
 public class PluginProcessPPS extends PluginProcessService {
+    Logger logger = LoggerFactory.getLogger(PluginLoadActivity.class);
+
     public PluginProcessPPS() {
+
+        logger.error("PluginProcessPPS 被创建了");
+
         LoadPluginCallback.setCallback(new LoadPluginCallback.Callback() {
 
             @Override

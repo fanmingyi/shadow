@@ -52,6 +52,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BaseDynamicPlugi
 
     @Override
     protected void onPluginServiceConnected(ComponentName name, IBinder service) {
+        //获得binder代理类（此处由于跨进程）
         mPpsController = PluginProcessService.wrapBinder(service);
         try {
             mPpsController.setUuidManager(new UuidManagerBinder(PluginManagerThatUseDynamicLoader.this));

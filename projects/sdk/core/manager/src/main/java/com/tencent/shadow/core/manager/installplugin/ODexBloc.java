@@ -28,6 +28,14 @@ public class ODexBloc {
 
     private static ConcurrentHashMap<String, Object> sLocks = new ConcurrentHashMap<>();
 
+    /**
+     * 使用匿名的加载器加载dex 使其优化程odex
+     * @param apkFile
+     * @param oDexDir
+     * @param copiedTagFile
+     * @return
+     * @throws InstallPluginException
+     */
     public static File oDexPlugin(File apkFile, File oDexDir, File copiedTagFile) throws InstallPluginException {
 
         String key = apkFile.getAbsolutePath();

@@ -21,6 +21,7 @@ package com.tencent.shadow.sample.manager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -74,6 +75,8 @@ public class SamplePluginManager extends FastPluginManager {
         }
     }
 
+    private static final String TAG = "SamplePluginManager";
+
     @Override
     public void enter(final Context context, long fromId, Bundle bundle, final EnterCallback callback) {
         if (fromId == Constant.FROM_ID_NOOP) {
@@ -103,6 +106,7 @@ public class SamplePluginManager extends FastPluginManager {
             @Override
             public void run() {
                 try {
+                    //在host中装载manager。并且解压runtime 和loader，没有加载哦
                     InstalledPlugin installedPlugin = installPlugin(pluginZipPath, null, true);
                     Intent pluginIntent = new Intent();
                     pluginIntent.setClassName(
@@ -110,6 +114,7 @@ public class SamplePluginManager extends FastPluginManager {
                             className
                     );
                     if (extras != null) {
+                        //替换在清淡文件注册的activity
                         pluginIntent.replaceExtras(extras);
                     }
 

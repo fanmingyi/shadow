@@ -1,6 +1,7 @@
 package com.tencent.shadow.dynamic.host;
 
 import android.os.Binder;
+import android.os.Debug;
 import android.os.IBinder;
 import android.os.Parcel;
 
@@ -39,6 +40,7 @@ public class MultiLoaderPpsBinder extends Binder {
                 _arg0 = data.readString();
                 _arg1 = data.readString();
                 try {
+
                     mPps.loadRuntimeForPlugin(_arg0, _arg1);
                     reply.writeInt(TRANSACTION_CODE_NO_EXCEPTION);
                 } catch (FailedException e) {

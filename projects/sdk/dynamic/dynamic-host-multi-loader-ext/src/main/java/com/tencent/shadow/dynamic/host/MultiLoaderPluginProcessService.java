@@ -2,6 +2,7 @@ package com.tencent.shadow.dynamic.host;
 
 import android.app.Application;
 import android.content.Intent;
+import android.os.Debug;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.TextUtils;
@@ -47,6 +48,8 @@ public class MultiLoaderPluginProcessService extends BasePluginProcessService {
     }
 
     synchronized void loadRuntimeForPlugin(String pluginKey, String uuid) throws FailedException {
+        //挂起等候调试器
+
         String logIdentity = "pluginKey=" + pluginKey + "|uuid=" + uuid;
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadRuntimeForPlugin:" + logIdentity);

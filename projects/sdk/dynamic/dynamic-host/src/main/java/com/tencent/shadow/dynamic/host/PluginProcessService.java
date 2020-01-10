@@ -20,6 +20,7 @@ package com.tencent.shadow.dynamic.host;
 
 import android.app.Application;
 import android.content.Intent;
+import android.os.Debug;
 import android.os.IBinder;
 import android.os.RemoteException;
 
@@ -103,6 +104,7 @@ public class PluginProcessService extends BasePluginProcessService {
                 throw new FailedException(ERROR_CODE_FILE_NOT_FOUND_EXCEPTION, "uuid==" + uuid + "的Runtime没有找到。cause:" + e.getMessage());
             }
 
+            //
             InstalledApk installedRuntimeApk = new InstalledApk(installedApk.apkFilePath, installedApk.oDexPath, installedApk.libraryPath);
             boolean loaded = DynamicRuntime.loadRuntime(installedRuntimeApk);
             if (loaded) {
@@ -128,6 +130,8 @@ public class PluginProcessService extends BasePluginProcessService {
                     , "重复调用loadPluginLoader");
         }
         try {
+
+            Debug.waitForDebugger();
             InstalledApk installedApk;
             try {
                 installedApk = mUuidManager.getPluginLoader(uuid);

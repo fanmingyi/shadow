@@ -59,7 +59,7 @@ class ApkClassLoader extends DexClassLoader {
         } else {
             packageName = "";
         }
-
+        //如果在白名单里面那么直接走双亲委托方式加载父类
         boolean isInterface = false;
         for (String interfacePackageName : mInterfacePackageNames) {
             if (packageName.equals(interfacePackageName)) {
@@ -71,11 +71,13 @@ class ApkClassLoader extends DexClassLoader {
         if (isInterface) {
             return super.loadClass(className, resolve);
         } else {
+            //检查这个类是否被加载过
             Class<?> clazz = findLoadedClass(className);
 
             if (clazz == null) {
                 ClassNotFoundException suppressed = null;
                 try {
+                    //直接加载
                     clazz = findClass(className);
                 } catch (ClassNotFoundException e) {
                     suppressed = e;
@@ -83,6 +85,7 @@ class ApkClassLoader extends DexClassLoader {
 
                 if (clazz == null) {
                     try {
+                        //通过双亲委托模型加载
                         clazz = mGrandParent.loadClass(className);
                     } catch (ClassNotFoundException e) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

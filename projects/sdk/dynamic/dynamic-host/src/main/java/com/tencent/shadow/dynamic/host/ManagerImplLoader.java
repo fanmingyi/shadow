@@ -43,13 +43,14 @@ final class ManagerImplLoader extends ImplLoader {
     }
 
     PluginManagerImpl load() {
+        //加载manager的apk
         ApkClassLoader apkClassLoader = new ApkClassLoader(
                 installedApk,
                 getClass().getClassLoader(),
                 loadWhiteList(installedApk),
                 1
         );
-
+        //读取apk的resource资源
         Context pluginManagerContext = new ChangeApkContextWrapper(
                 applicationContext,
                 installedApk.apkFilePath,
@@ -57,10 +58,12 @@ final class ManagerImplLoader extends ImplLoader {
         );
 
         try {
+            //从manager的apk读取ManagerFactory
             ManagerFactory managerFactory = apkClassLoader.getInterface(
                     ManagerFactory.class,
                     MANAGER_FACTORY_CLASS_NAME
             );
+
             return managerFactory.buildManager(pluginManagerContext);
         } catch (Exception e) {
             throw new RuntimeException(e);

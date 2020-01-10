@@ -56,11 +56,14 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
     }
 
 
-    public InstalledPlugin installPlugin(String zip, String hash , boolean odex) throws IOException, JSONException, InterruptedException, ExecutionException {
+    public InstalledPlugin installPlugin(String zip, String hash, boolean odex) throws IOException, JSONException, InterruptedException, ExecutionException {
+        //解压zip。内部有三个apk 分别为loader，plugin，runtime
         final InstalledPlugin installedPlugin = installPluginFromZip(new File(zip), hash);
 
         List<Future> futures = new LinkedList<>();
+        //安装runtime和loader，内部都是使用匿名都
         if (installedPlugin.runtimeFile != null && installedPlugin.pluginLoaderFile != null) {
+
             Future odexRuntime = mFixedPool.submit(new Callable() {
                 @Override
                 public Object call() throws Exception {
@@ -68,7 +71,9 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
                     return null;
                 }
             });
+
             futures.add(odexRuntime);
+
             Future odexLoader = mFixedPool.submit(new Callable() {
                 @Override
                 public Object call() throws Exception {
@@ -78,8 +83,13 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
             });
             futures.add(odexLoader);
         }
+
+        /**
+         * 提取plugin
+         */
         for (Map.Entry<String, InstalledPlugin.PluginPart> plugin : installedPlugin.plugins.entrySet()) {
             final String partKey = plugin.getKey();
+            //解压提取plugin的so
             Future extractSo = mFixedPool.submit(new Callable() {
                 @Override
                 public Object call() throws Exception {
@@ -89,6 +99,7 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
             });
             futures.add(extractSo);
             if (odex) {
+                //解压提取plugin的dex
                 Future odexPlugin = mFixedPool.submit(new Callable() {
                     @Override
                     public Object call() throws Exception {
@@ -127,10 +138,16 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
 
     private void loadPluginLoaderAndRuntime(String uuid, String partKey) throws RemoteException, TimeoutException, FailedException {
         if (mPpsController == null) {
+            //启动server（单独的进程），把loader和runtimer，plugin加载
             bindPluginProcessService(getPluginProcessServiceName(partKey));
             waitServiceConnected(10, TimeUnit.SECONDS);
         }
+        //此时服务器已经启动并且plugin 和runtime loader资源已经被解压
+        //ipc 加载运行时到内存中，runtime是一个动态的activity类
+        //跳转到PluginProcessService#loadRuntime
+        //注意此时。插件化进程的双亲委托被有所修改。BootClassLoader->RuntimeClassLoader->PathClassLoader
         loadRunTime(uuid);
+        //ipc
         loadPluginLoader(uuid);
     }
 

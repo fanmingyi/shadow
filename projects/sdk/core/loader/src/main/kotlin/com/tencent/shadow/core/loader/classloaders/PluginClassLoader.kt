@@ -19,6 +19,7 @@
 package com.tencent.shadow.core.loader.classloaders
 
 import android.os.Build
+import android.util.Log
 import dalvik.system.BaseDexClassLoader
 import java.io.File
 
@@ -35,7 +36,7 @@ import java.io.File
  *                                 |
  *  PluginClassLoaderB        PluginClassLoaderC
  *
-*/
+ */
 class PluginClassLoader(
         dexPath: String,
         optimizedDirectory: File?,
@@ -44,6 +45,7 @@ class PluginClassLoader(
         private val specialClassLoader: ClassLoader?, hostWhiteList: Array<String>?
 ) : BaseDexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
 
+
     /**
      * 宿主的白名单包名
      * 在白名单包里面的宿主类，插件才可以访问
@@ -51,16 +53,18 @@ class PluginClassLoader(
     private val allHostWhiteList: Array<String>
 
     private val loaderClassLoader = PluginClassLoader::class.java.classLoader!!
+    val TAG = this.javaClass::getSimpleName.toString()
 
     init {
         val defaultWhiteList = arrayOf(
-                               "org.apache.commons.logging"//org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
+                "org.apache.commons.logging"//org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
         )
         if (hostWhiteList != null) {
             allHostWhiteList = defaultWhiteList.plus(hostWhiteList)
-        }else {
+        } else {
             allHostWhiteList = defaultWhiteList
         }
+
     }
 
     @Throws(ClassNotFoundException::class)

@@ -71,14 +71,18 @@ abstract public class BaseDynamicPluginManager extends BasePluginManager impleme
             public void run() {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName(mHostContext, serviceName));
+                //链接到多进程服务中
                 boolean binding = mHostContext.bindService(intent, new ServiceConnection() {
                     @Override
                     public void onServiceConnected(ComponentName name, IBinder service) {
+
                         if (mLogger.isInfoEnabled()) {
                             mLogger.info("onServiceConnected connectCountDownLatch:" + mConnectCountDownLatch);
                         }
                         mServiceConnecting.set(false);
 
+
+                        //PluginManagerThatUseDynamicLoader
                         // service connect 后处理逻辑
                         onPluginServiceConnected(name, service);
 

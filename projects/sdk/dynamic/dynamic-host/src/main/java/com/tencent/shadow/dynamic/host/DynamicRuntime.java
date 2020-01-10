@@ -21,6 +21,7 @@ package com.tencent.shadow.dynamic.host;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Debug;
 import android.text.TextUtils;
 
 import com.tencent.shadow.core.common.InstalledApk;
@@ -54,8 +55,12 @@ public class DynamicRuntime {
      * @return true 加载了新的runtime
      */
     public static boolean loadRuntime(InstalledApk installedRuntimeApk) {
+
+        //此处拿到PathClassLoader，因为我们的apk就是被这个加载的，所以DynamicRuntime自然而然引用到PathClassLoader
         ClassLoader contextClassLoader = DynamicRuntime.class.getClassLoader();
+        //检查插件是否生产了对应的类加载器并且hack为pathClassLoader的父类
         RuntimeClassLoader runtimeClassLoader = getRuntimeClassLoader();
+        //在第一次的时候必然返回null
         if (runtimeClassLoader != null) {
             String apkPath = runtimeClassLoader.apkPath;
             if (mLogger.isInfoEnabled()) {
@@ -81,6 +86,7 @@ public class DynamicRuntime {
         }
         //正常处理，将runtime 挂到pathclassLoader之上
         try {
+            //contextClassLoader为PathClassLoader
             hackParentToRuntime(installedRuntimeApk, contextClassLoader);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -89,7 +95,7 @@ public class DynamicRuntime {
     }
 
 
-    private static void recoveryClassLoader() throws Exception{
+    private static void recoveryClassLoader() throws Exception {
         ClassLoader contextClassLoader = DynamicRuntime.class.getClassLoader();
         ClassLoader child = contextClassLoader;
         ClassLoader tmpClassLoader = contextClassLoader.getParent();
@@ -104,6 +110,12 @@ public class DynamicRuntime {
     }
 
 
+    /**
+     * 由于shadow进行hack操作导致PathClassloader变为自己的，
+     * 所以如果没有进行hack操作之前此处会返回null
+     *
+     * @return
+     */
     private static RuntimeClassLoader getRuntimeClassLoader() {
         ClassLoader contextClassLoader = DynamicRuntime.class.getClassLoader();
         ClassLoader tmpClassLoader = contextClassLoader.getParent();
@@ -117,10 +129,23 @@ public class DynamicRuntime {
     }
 
 
+    /**
+     * shadow唯一处hack代码
+     * @param installedRuntimeApk
+     * @param contextClassLoader
+     * @throws Exception
+     */
     private static void hackParentToRuntime(InstalledApk installedRuntimeApk, ClassLoader contextClassLoader) throws Exception {
+
+        /**
+         * 构造runtime
+         */
         RuntimeClassLoader runtimeClassLoader = new RuntimeClassLoader(installedRuntimeApk.apkFilePath, installedRuntimeApk.oDexPath,
                 installedRuntimeApk.libraryPath, contextClassLoader.getParent());
+
+
         hackParentClassLoader(contextClassLoader, runtimeClassLoader);
+
     }
 
 
@@ -132,7 +157,7 @@ public class DynamicRuntime {
      * @throws Exception 失败时抛出
      */
     static void hackParentClassLoader(ClassLoader classLoader,
-                                              ClassLoader newParentClassLoader) throws Exception {
+                                      ClassLoader newParentClassLoader) throws Exception {
         Field field = getParentField();
         if (field == null) {
             throw new RuntimeException("在ClassLoader.class中没找到类型为ClassLoader的parent域");

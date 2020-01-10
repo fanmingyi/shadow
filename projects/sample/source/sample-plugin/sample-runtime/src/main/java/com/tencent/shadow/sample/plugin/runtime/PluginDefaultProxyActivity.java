@@ -20,6 +20,8 @@ package com.tencent.shadow.sample.plugin.runtime;
 
 
 import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 
 import com.tencent.shadow.core.runtime.container.PluginContainerActivity;
 
@@ -29,5 +31,10 @@ public class PluginDefaultProxyActivity extends PluginContainerActivity {
     @Override
     protected String getDelegateProviderKey() {
         return "SAMPLE";
+    }
+
+    @Override
+    public void onCreate(Bundle arg0, PersistableBundle arg1) {
+        super.onCreate(arg0, arg1);
     }
 }

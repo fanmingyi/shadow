@@ -18,6 +18,7 @@
 
 package com.tencent.shadow.dynamic.host;
 
+import android.os.Debug;
 import android.os.IBinder;
 import android.os.Parcel;
 

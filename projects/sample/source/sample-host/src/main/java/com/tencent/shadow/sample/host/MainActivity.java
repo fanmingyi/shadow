@@ -54,7 +54,6 @@ public class MainActivity extends Activity {
                 Constant.PART_KEY_PLUGIN_MAIN_APP
         );
         partKeySpinner.setAdapter(partKeysAdapter);
-
         rootView.addView(partKeySpinner);
 
         Button startPluginButton = new Button(this);

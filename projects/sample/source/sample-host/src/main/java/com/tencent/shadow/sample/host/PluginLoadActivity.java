@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.tencent.shadow.dynamic.host.EnterCallback;
 import com.tencent.shadow.sample.constant.Constant;
@@ -51,6 +52,7 @@ public class PluginLoadActivity extends Activity {
         PluginHelper.getInstance().singlePool.execute(new Runnable() {
             @Override
             public void run() {
+                //动态加载manager.apk     pluginManagerFile--->>/data/user/0/com.tencent.shadow.sample.host/files/pluginmanager.apk
                 HostApplication.getApp().loadPluginManager(PluginHelper.getInstance().pluginManagerFile);
 
                 Bundle bundle = new Bundle();
@@ -65,7 +67,10 @@ public class PluginLoadActivity extends Activity {
                                 mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        mViewGroup.addView(view);
+                                        TextView textView = new TextView(PluginLoadActivity.this);
+                                        textView.setText("测试本文");
+//                                        mViewGroup.addView(view);
+                                        mViewGroup.addView(textView);
                                     }
                                 });
                             }

@@ -21,6 +21,7 @@ package com.tencent.shadow.sample.plugin.loader;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
+import android.util.Log;
 
 import com.tencent.shadow.core.common.InstalledApk;
 import com.tencent.shadow.core.load_parameters.LoadParameters;
@@ -51,8 +52,11 @@ public class SamplePluginLoader extends ShadowPluginLoader {
         return componentManager;
     }
 
+//    private static final String TAG = "SamplePluginLoader";
+
     @Override
     public Future<?> loadPlugin(final InstalledApk installedApk) throws LoadPluginException {
+
         LoadParameters loadParameters = getLoadParameters(installedApk);
         final String partKey = loadParameters.partKey;
 

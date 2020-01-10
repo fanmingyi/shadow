@@ -55,6 +55,7 @@ public class HostApplication extends Application {
             DynamicRuntime.recoveryRuntime(this);
         }
 
+        //作用：复制出asset目录下的文件
         PluginHelper.getInstance().init(this);
 
         HostUiLayerProvider.init(this);
@@ -73,6 +74,10 @@ public class HostApplication extends Application {
         return sApp;
     }
 
+    /**
+     * 这里会{@link #mPluginManager}为{@link com.tencent.shadow.dynamic.host.DynamicPluginManager}
+     * @param apk
+     */
     public void loadPluginManager(File apk) {
         if (mPluginManager == null) {
             mPluginManager = Shadow.getPluginManager(apk);

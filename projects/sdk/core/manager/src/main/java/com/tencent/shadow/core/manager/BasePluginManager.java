@@ -165,7 +165,10 @@ public abstract class BasePluginManager {
      * @param type 要oDex的插件类型 @class IntalledType  loader or runtime
      */
     public final void oDexPluginLoaderOrRunTime(String uuid, int type) throws InstallPluginException {
+
+        //得到一个序列化对象
         InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid, type);
+
         try {
             File root = mUnpackManager.getAppDir();
             File oDexDir = AppCacheFolderManager.getODexDir(root, uuid);
